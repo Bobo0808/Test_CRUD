@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TEST.Data;
 using TEST.Models;
 using TEST.Models.Domain;
 
@@ -6,6 +7,12 @@ namespace TEST.Controllers
 {
     public class EmployeesController : Controller
     {
+        private readonly MVCDemoDbContext mvcDemoDbContext;
+
+        public EmployeesController(MVCDemoDbContext mvcDemoDbContext)
+        {
+            this.mvcDemoDbContext = mvcDemoDbContext;
+        }
         [HttpGet]
         public IActionResult Add()
         {
@@ -15,7 +22,7 @@ namespace TEST.Controllers
         [HttpPost]
 
         //我需要這邊的解釋
-        public IActionResult add(AddEmployeeViewModel addEmployeeViewModel) 
+        public IActionResult Add(AddEmployeeViewModel addEmployeeViewModel) 
         {
             var employee = new Employee()
             {
@@ -25,9 +32,6 @@ namespace TEST.Controllers
                 Salary = addEmployeeViewModel.Salary,
                 Department = addEmployeeViewModel.Department,
                 DateOfBirth = addEmployeeViewModel.DateOfBirth,
-                
-            
-            
             };
 
         }

@@ -13,9 +13,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
     //使用者會以Sliding運作，當使用者活躍時令牌效用就會延長。禁用滑動過期。這意味著一旦令牌過期，就需要重新獲取一個令牌來使用網站
     options.SlidingExpiration = false;
-    options.LoginPath = "/";
-    options.LogoutPath = "/";
-    options.AccessDeniedPath = "/";
+    options.LoginPath = "/Employees/Login";
+    options.LogoutPath = "/Employees/Logout";
+    options.AccessDeniedPath = "/Home/AccessDenied";
 });
 var app = builder.Build();
 

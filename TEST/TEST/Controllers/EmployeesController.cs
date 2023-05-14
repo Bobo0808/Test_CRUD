@@ -9,6 +9,7 @@ using TEST.Data;
 using TEST.Models;
 using TEST.Models.Domain;
 using NETCore.Encrypt.Extensions;
+using System.ComponentModel.DataAnnotations;
 
 namespace TEST.Controllers
 {
@@ -35,12 +36,12 @@ namespace TEST.Controllers
             if (ModelState.IsValid)
             {
                 string hashedPassword = DoMD5HashedString(model.Password);
-                User user = _mvcDemoDbContext.Users.SingleOrDefault(x => x.Username.ToLower() == model.UserName.ToLower() && x.Password == hashedPassword);
+                User user = _mvcDemoDbContext.Users.SingleOrDefault(x => x.Username.ToLower() == model.Username.ToLower() && x.Password == hashedPassword);
                 if (user != null)
                 {
                     if (user.Locked)
                     {
-                        ModelState.AddModelError(nameof(model.UserName), "User is locked.");
+                        ModelState.AddModelError(nameof(model.Username), "User is locked.");
                         return View(model);
                     }
                     List<Claim> claims = new List<Claim>();
@@ -69,18 +70,110 @@ namespace TEST.Controllers
 
         private string DoMD5HashedString(string s)
         {
-            //要使用雜湊
+            //要下載掛件
             string md5Salt = _configuration.GetValue<string>("AppSettings:MD5Salt");
             string salted = s + md5Salt;
             string hashed = salted.MD5();
             return hashed;
         }
 
+        [AllowAnonymous]
+        public IActionResult Register()
+        {
+            return View();
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult Register(RegisterVM model)
+        {
+            //表單驗證通過
+            if (ModelState.IsValid)
+            {
+                if (_mvcDemoDbContext.Users.Any(x => x.Username.ToLower() == model.Username.ToLower()))
+                {
+                    ModelState.AddModelError(nameof(model.Username), "Username is already exists.");
+                    View(model);
+                }
 
+                string hashedPassword = DoMD5HashedString(model.Password);
 
+                User user = new()
+                {
+                    Username = model.Username,
+                    Password = hashedPassword
+                };
 
+                _mvcDemoDbContext.Users.Add(user);
+                int affectedRowCount = _mvcDemoDbContext.SaveChanges();
 
+                if (affectedRowCount == 0)
+                {
+                    ModelState.AddModelError("", "User can not be added.");
+                }
+                else
+                {
+                    return RedirectToAction(nameof(Login));
+                }
+            }
 
+            return View(model);
+        }
+        public IActionResult Profile()
+        {
+            ProfileInfoLoader();
+
+            return View();
+        }
+        private void ProfileInfoLoader()
+        {
+            Guid userid = new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            User user = _mvcDemoDbContext.Users.SingleOrDefault(x => x.Id == userid);
+
+            ViewData["FullName"] = user.FullName;
+        }
+        [HttpPost]
+        public IActionResult ProfileChangeFullName([Required][StringLength(50)] string? fullname)
+        {
+            if (ModelState.IsValid)
+            {
+                Guid userid = new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                User user = _mvcDemoDbContext.Users.SingleOrDefault(x => x.Id == userid);
+
+                user.FullName = fullname;
+                _mvcDemoDbContext.SaveChanges();
+
+                return RedirectToAction(nameof(Profile));
+            }
+
+            ProfileInfoLoader();
+            return View("Profile");
+        }
+
+        [HttpPost]
+        public IActionResult ProfileChangePassword([Required][MinLength(6)][MaxLength(16)] string? password)
+        {
+            if (ModelState.IsValid)
+            {
+                Guid userid = new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                User user = _mvcDemoDbContext.Users.SingleOrDefault(x => x.Id == userid);
+
+                string hashedPassword = DoMD5HashedString(password);
+
+                user.Password = hashedPassword;
+                _mvcDemoDbContext.SaveChanges();
+
+                ViewData["result"] = "PasswordChanged";
+            }
+
+            ProfileInfoLoader();
+            return View("Profile");
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction(nameof(Login));
+        }
 
         [HttpGet]
         public IActionResult Add()

@@ -12,5 +12,6 @@ namespace TEST.Data
         }
         //可以讓你使用Emplyees來做CRUD
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

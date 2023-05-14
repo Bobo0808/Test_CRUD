@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>編輯員工</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+
+        header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-field {
+            margin-bottom: 10px;
+        }
+
+        .input-field label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .input-field input,
+        .input-field select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .text-danger {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #4070f4;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #2c5cff;
+        }
+    </style>
+</head>
+
+<body>
+    <header>編輯員工</header>
+    <div class="container">
+        <form method="post" asp-action="Edit">
+            <div class="form first">
+                <div class="details personal">
+                    <span class="title"></span>
+                    <div class="fields">
+                        <div class="input-field">
+                            <label>全名</label>
+                            <input type="text" placeholder="輸入名稱" required asp-for="E_Name">
+                            <span asp-validation-for="E_Name" class="text-danger"></span>
+                        </div>
+                        <!-- 其他输入字段 -->
+                    </div>
+                </div>
+                <div class="details ID">
+                    <span class="title"></span>
+                    <div class="fields">
+                        <div class="input-field">
+                            <label>ID</label>
+                            <input type="text" placeholder="輸入ID" required asp-for="E_ID" readonly>
+                        </div>
+                        <!-- 其他输入字段 -->
+                        <a asp-area="Employee" asp-controller="Employees" asp-action="Index" asp-route-id=""
+                            class="btn">
+                            <i class="fa fa-sharp fa-solid fa-arrow-left"></i>回上一頁
+                        </a>
+                    </div>
+                </div>
+                <button class="submit">
+                    <span class="btnText">儲存</span>
+                    <i class="uil uil-navigator"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

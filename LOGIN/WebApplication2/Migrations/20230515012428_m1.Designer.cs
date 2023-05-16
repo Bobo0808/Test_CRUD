@@ -12,8 +12,8 @@ using WebApplication2.Entities;
 namespace WebApplication2.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20220927201930_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230515012428_m1")]
+    partial class m1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -44,6 +44,11 @@ namespace WebApplication2.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Username")
                         .IsRequired()

@@ -109,7 +109,7 @@ namespace VerifyEmailForgotPassword.Controllers
             user.PasswordRestToken = null ;
             user.ResetTokenExpries=null ;
 
-
+            await _context.SaveChangesAsync();
             return Ok("密碼成功reset");
 
         }
